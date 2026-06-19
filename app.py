@@ -53,6 +53,9 @@ if page == "Home":
 
     st.success("RetailPulse AI Dashboard Loaded Successfully!")
 
+# -------------------------
+# Sales Analysis
+# -------------------------
 elif page == "Sales Analysis":
 
     st.header("Sales Analysis")
@@ -103,8 +106,8 @@ elif page == "Forecasting":
         ax.plot(forecast["yhat"])
         ax.set_title("Forecasted Sales")
         st.pyplot(fig)
-    except:
-        st.warning("prophet_forecast_results.csv not found.")
+    except Exception as e:
+        st.warning(f"prophet_forecast_results.csv not found: {e}")
 
 # -------------------------
 # Business Insights
