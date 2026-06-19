@@ -40,22 +40,16 @@ if page == "Home":
 
     st.header("Dashboard Overview")
 
+    rfm = pd.read_csv("customer_rfm.csv")
+    sales = pd.read_csv("cleaned_online_retail.csv")
+
+    total_revenue = sales["Revenue"].sum()
+    total_customers = rfm["Customer ID"].nunique()
+
     col1, col2, col3 = st.columns(3)
-
-    col1.metric(
-        "Total Revenue",
-        "£1.2M"
-    )
-
-    col2.metric(
-        "Customers",
-        "4300"
-    )
-
-    col3.metric(
-        "Forecast Accuracy",
-        "92%"
-    )
+    col1.metric("Total Revenue", f"£{total_revenue:,.0f}")
+    col2.metric("Customers", f"{total_customers:,}")
+    col3.metric("Prophet MAPE", "39.40%")
 
     st.success("RetailPulse AI Dashboard Loaded Successfully!")
 
@@ -67,23 +61,14 @@ elif page == "Sales Analysis":
     st.header("Sales Analysis")
 
     try:
-
         df = pd.read_csv("cleaned_online_retail.csv")
-
         st.write(df.head())
-
         revenue = df["Revenue"].head(20)
-
         fig, ax = plt.subplots(figsize=(10,5))
-
         ax.plot(revenue)
-
         ax.set_title("Sample Revenue Trend")
-
         st.pyplot(fig)
-
     except:
-
         st.warning("cleaned_online_retail.csv not found.")
 
 # -------------------------
@@ -93,37 +78,16 @@ elif page == "Customer Segmentation":
 
     st.header("Customer Segmentation")
 
-    data = {
+    rfm = pd.read_csv("customer_rfm.csv")
+    seg_counts = rfm["Segment"].value_counts().reset_index()
+    seg_counts.columns = ["Segment", "Customers"]
 
-        "Segment":[
-            "VIP",
-            "Regular",
-            "At Risk",
-            "Lost"
-        ],
-
-        "Customers":[
-            520,
-            1800,
-            900,
-            450
-        ]
-
-    }
-
-    seg = pd.DataFrame(data)
-
-    st.dataframe(seg)
+    st.dataframe(seg_counts)
 
     fig, ax = plt.subplots()
-
-    ax.bar(
-        seg["Segment"],
-        seg["Customers"]
-    )
-
+    ax.bar(seg_counts["Segment"], seg_counts["Customers"])
     ax.set_title("Customer Segments")
-
+    plt.xticks(rotation=15)
     st.pyplot(fig)
 
 # -------------------------
@@ -134,34 +98,14 @@ elif page == "Forecasting":
     st.header("Demand Forecast")
 
     try:
-
-        forecast = pd.read_csv(
-            "prophet_forecast_results.csv"
-        )
-
-        st.write(
-            forecast.head()
-        )
-
-        fig, ax = plt.subplots(
-            figsize=(10,5)
-        )
-
-        ax.plot(
-            forecast["yhat"]
-        )
-
-        ax.set_title(
-            "Forecasted Sales"
-        )
-
+        forecast = pd.read_csv("prophet_forecast_results.csv")
+        st.write(forecast.head())
+        fig, ax = plt.subplots(figsize=(10,5))
+        ax.plot(forecast["yhat"])
+        ax.set_title("Forecasted Sales")
         st.pyplot(fig)
-
     except:
-
-        st.warning(
-            "prophet_forecast_results.csv not found."
-        )
+        st.warning("prophet_forecast_results.csv not found.")
 
 # -------------------------
 # Business Insights
