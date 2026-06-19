@@ -41,7 +41,7 @@ if page == "Home":
     st.header("Dashboard Overview")
 
     rfm = pd.read_csv("customer_rfm.csv")
-    sales = pd.read_csv("cleaned_online_retail.csv")
+    sales = pd.read_csv("sales_summary.csv")
 
     total_revenue = sales["Revenue"].sum()
     total_customers = rfm["Customer ID"].nunique()
@@ -53,23 +53,22 @@ if page == "Home":
 
     st.success("RetailPulse AI Dashboard Loaded Successfully!")
 
-# -------------------------
-# Sales Analysis
-# -------------------------
 elif page == "Sales Analysis":
 
     st.header("Sales Analysis")
 
     try:
-        df = pd.read_csv("cleaned_online_retail.csv")
+        df = pd.read_csv("sales_summary.csv")
         st.write(df.head())
-        revenue = df["Revenue"].head(20)
         fig, ax = plt.subplots(figsize=(10,5))
-        ax.plot(revenue)
-        ax.set_title("Sample Revenue Trend")
+        ax.plot(df["Date"], df["Revenue"])
+        ax.set_title("Daily Sales Trend")
+        ax.set_xlabel("Date")
+        ax.set_ylabel("Revenue (£)")
+        plt.xticks(rotation=45)
         st.pyplot(fig)
-    except:
-        st.warning("cleaned_online_retail.csv not found.")
+    except Exception as e:
+        st.warning(f"sales_summary.csv not found: {e}")
 
 # -------------------------
 # Customer Segmentation
